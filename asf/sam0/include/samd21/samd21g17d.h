@@ -3,25 +3,29 @@
  *
  * \brief Header file for SAMD21G17D
  *
- * Copyright (c) 2018 Microchip Technology Inc.
+ * Copyright (c) 2018 Microchip Technology Inc. and its subsidiaries.
  *
  * \asf_license_start
  *
  * \page License
  *
- * SPDX-License-Identifier: Apache-2.0
+ * Subject to your compliance with these terms, you may use Microchip
+ * software and any derivatives exclusively with Microchip products.
+ * It is your responsibility to comply with third party license terms applicable
+ * to your use of third party software (including open source software) that
+ * may accompany Microchip software.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License.
- * You may obtain a copy of the Licence at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an AS IS BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES,
+ * WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE,
+ * INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY,
+ * AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT WILL MICROCHIP BE
+ * LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL
+ * LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND WHATSOEVER RELATED TO THE
+ * SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS BEEN ADVISED OF THE
+ * POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT
+ * ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY
+ * RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
+ * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
  *
  * \asf_license_stop
  *
@@ -90,13 +94,13 @@ typedef volatile       uint8_t  RwReg8;  /**< Read-Write  8-bit register (volati
 /** Interrupt Number Definition */
 typedef enum IRQn
 {
-  /******  Cortex-M0+ Processor Exceptions Numbers *******************/
-  NonMaskableInt_IRQn      = -14,/**<  2 Non Maskable Interrupt      */
-  HardFault_IRQn           = -13,/**<  3 Hard Fault Interrupt        */
-  SVCall_IRQn              = -5, /**< 11 SV Call Interrupt           */
-  PendSV_IRQn              = -2, /**< 14 Pend SV Interrupt           */
-  SysTick_IRQn             = -1, /**< 15 System Tick Interrupt       */
-  /******  SAMD21G17D-specific Interrupt Numbers *********************/
+  /******  Cortex-M0+ Processor Exceptions Numbers ******************************/
+  NonMaskableInt_IRQn      = -14,/**<  2 Non Maskable Interrupt                 */
+  HardFault_IRQn           = -13,/**<  3 Cortex-M0+ Hard Fault Interrupt        */
+  SVCall_IRQn              = -5, /**< 11 Cortex-M0+ SV Call Interrupt           */
+  PendSV_IRQn              = -2, /**< 14 Cortex-M0+ Pend SV Interrupt           */
+  SysTick_IRQn             = -1, /**< 15 Cortex-M0+ System Tick Interrupt       */
+  /******  SAMD21G17D-specific Interrupt Numbers ***********************/
   PM_IRQn                  =  0, /**<  0 SAMD21G17D Power Manager (PM) */
   SYSCTRL_IRQn             =  1, /**<  1 SAMD21G17D System Control (SYSCTRL) */
   WDT_IRQn                 =  2, /**<  2 SAMD21G17D Watchdog Timer (WDT) */
@@ -135,7 +139,7 @@ typedef struct _DeviceVectors
 
   /* Cortex-M handlers */
   void* pfnReset_Handler;
-  void* pfnNonMaskableInt_Handler;
+  void* pfnNMI_Handler;
   void* pfnHardFault_Handler;
   void* pvReservedM12;
   void* pvReservedM11;
@@ -144,7 +148,7 @@ typedef struct _DeviceVectors
   void* pvReservedM8;
   void* pvReservedM7;
   void* pvReservedM6;
-  void* pfnSVCall_Handler;
+  void* pfnSVC_Handler;
   void* pvReservedM4;
   void* pvReservedM3;
   void* pfnPendSV_Handler;
@@ -185,9 +189,9 @@ typedef struct _DeviceVectors
 
 /* Cortex-M0+ processor handlers */
 void Reset_Handler               ( void );
-void NonMaskableInt_Handler      ( void );
+void NMI_Handler                 ( void );
 void HardFault_Handler           ( void );
-void SVCall_Handler              ( void );
+void SVC_Handler                 ( void );
 void PendSV_Handler              ( void );
 void SysTick_Handler             ( void );
 
@@ -224,6 +228,7 @@ void TCC3_Handler                ( void );
  * \brief Configuration of the Cortex-M0+ Processor and Core Peripherals
  */
 
+#define LITTLE_ENDIAN          1        
 #define __CM0PLUS_REV          1         /*!< Core revision r0p1 */
 #define __MPU_PRESENT          0         /*!< MPU present or not */
 #define __NVIC_PRIO_BITS       2         /*!< Number of bits used for Priority Levels */
@@ -253,20 +258,20 @@ void TCC3_Handler                ( void );
 #include "component/dmac.h"
 #include "component/dsu.h"
 #include "component/eic.h"
-#include "component/evsys.h"
+#include "component/evsys_variant_d.h"
 #include "component/gclk.h"
 #include "component/hmatrixb.h"
 #include "component/i2s.h"
 #include "component/mtb.h"
-#include "component/nvmctrl.h"
+#include "component/nvmctrl_variant_d.h"
 #include "component/pac.h"
-#include "component/pm.h"
+#include "component/pm_variant_d.h"
 #include "component/port.h"
 #include "component/rtc.h"
 #include "component/sercom.h"
 #include "component/sysctrl.h"
 #include "component/tc.h"
-#include "component/tcc.h"
+#include "component/tcc_variant_d.h"
 #include "component/usb.h"
 #include "component/wdt.h"
 /*@}*/
@@ -283,18 +288,17 @@ void TCC3_Handler                ( void );
 #include "instance/dmac.h"
 #include "instance/dsu.h"
 #include "instance/eic.h"
-#include "instance/evsys.h"
+#include "instance/evsys_variant_d.h"
 #include "instance/gclk.h"
 #include "instance/sbmatrix.h"
 #include "instance/i2s.h"
 #include "instance/mtb.h"
-#include "instance/nvmctrl.h"
+#include "instance/nvmctrl_variant_d.h"
 #include "instance/pac0.h"
 #include "instance/pac1.h"
 #include "instance/pac2.h"
 #include "instance/pm.h"
-#include "instance/port.h"
-#include "instance/ptc.h"
+#include "instance/port_variant_d.h"
 #include "instance/rtc.h"
 #include "instance/sercom0.h"
 #include "instance/sercom1.h"
