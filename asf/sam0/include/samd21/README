@@ -8,8 +8,13 @@ Origin:
    Atmel SAMD21 Series Device Support (1.2.276)
    http://packs.download.atmel.com/Atmel.SAMD21_DFP.1.2.276.atpack
 
+   SAMD21G17D (samd21d variant) files:
+   Atmel SAMD21 Series Device Support (1.3.395)
+   http://packs.download.atmel.com/Atmel.SAMD21_DFP.1.3.395.atpack
+
 Status:
    version 1.2.276
+   version 1.3.395 (SAMD21G17D)
 
 Purpose:
    Official package for SAM D21.
@@ -22,6 +27,7 @@ Description:
 URL:
    http://packs.download.atmel.com/
    http://packs.download.atmel.com/Atmel.SAMD21_DFP.1.2.276.atpack
+   http://packs.download.atmel.com/Atmel.SAMD21_DFP.1.3.395.atpack
 
 commit:
   n/a
@@ -38,3 +44,9 @@ License Link:
 Patch List:
    * Fix anonymous bit-fields with qualifiers.
    * Rename DAC EMPTY bit-fields to DBEMPTY to avoid collision with Zephyr macros.
+   * SAMD21G17D: rename the samd21d component/evsys.h, component/nvmctrl.h,
+     component/pm.h, component/tcc.h, instance/evsys.h, instance/nvmctrl.h
+     and instance/port.h to *_variant_d.h, since they differ from the
+     samd21a files of the same name.
+   * SAMD21G17D: rename NonMaskableInt_Handler and SVCall_Handler to
+     NMI_Handler and SVC_Handler, matching the other samd21 headers.
